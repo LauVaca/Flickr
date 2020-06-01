@@ -5,21 +5,19 @@ import PhotoDetail from './PhotoDetail';
 
 const PhotoList = ({albumId}) => {
   const [photos, setPhotos] = useState(null);
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const {data} = await axios.get(
+    const fetchData = () => {
+      axios
+        .get(
           `https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=6e8a597cb502b7b95dbd46a46e25db8d&photoset_id=${albumId}&user_id=137290658%40N08&format=json&nojsoncallback=1`,
-        );
-        setPhotos(data.photoset.photo);
-      } catch (err) {
-        console.log(err);
-      }
+        )
+        .then(response => setPhotos(response.data.photoset.photo));
     };
+
     fetchData();
   }, []);
 
-  //.then(response => this.setState({ photos: response.data.photoset.photo }));
   if (!photos) {
     return (
       // eslint-disable-next-line react-native/no-inline-styles
@@ -37,6 +35,7 @@ const PhotoList = ({albumId}) => {
         renderItem={({item}) => (
           <PhotoDetail
             key={item.title}
+            photoId={item.id}
             title={item.title}
             imageUrl={`https://farm${item.farm}.staticflickr.com/${
               item.server

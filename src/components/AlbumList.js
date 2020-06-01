@@ -3,7 +3,7 @@ import {FlatList, Text, View} from 'react-native';
 import axios from 'axios';
 import AlbumDetail from './AlbumDetail';
 
-const AlbumList = () => {
+const AlbumList = props => {
   const [photoset, setPhotoset] = useState(null);
   useEffect(() => {
     const fectchData = async () => {
@@ -31,7 +31,7 @@ const AlbumList = () => {
         data={photoset}
         renderItem={({item}) => (
           <AlbumDetail
-            navigation={item.navigation}
+            navigation={props.navigation}
             key={item.id}
             title={item.title._content}
             albumId={item.id}
