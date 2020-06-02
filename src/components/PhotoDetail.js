@@ -7,9 +7,6 @@ import axios from 'axios';
 import {List} from 'react-native-paper';
 
 const PhotoDetail = ({title, imageUrl, photoId}) => {
-  const [comments, setComments] = useState(null);
-  const [lista, setLista] = useState(false);
-
   const {
     thumbnailStyle,
     headerContentStyle,
@@ -18,19 +15,22 @@ const PhotoDetail = ({title, imageUrl, photoId}) => {
     imageStyle,
   } = styles;
 
+  const [comments, setComments] = useState(null);
+  const [showComments, setShowComments] = useState(false);
+
   useEffect(() => {
-    const fetchComments = () => {
-      axios
-        .get(
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
           `https://api.flickr.com/services/rest/?method=flickr.photos.comments.getList&api_key=6e8a597cb502b7b95dbd46a46e25db8d&photo_id=${photoId}&format=json&nojsoncallback=1`,
-        )
-        .then(response => setComments(response.data.comments.comment));
+        );
+        setComments(response.data.comments.comment);
+      } catch (err) {
+        console.log(err);
+      }
     };
-
     fetchComments();
-  }, []);
-
-  const _handlePress = () => setLista(!lista);
+  }, [photoId]);
 
   return (
     <Card>
@@ -52,16 +52,29 @@ const PhotoDetail = ({title, imageUrl, photoId}) => {
       </CardSection>
 
       <CardSection>
-        <List.Section title="comentarios">
-          <List.Accordion
-            title="Controlled Accordion"
-            left={props => <List.Icon {...props} icon="folder" />}
-            expanded={lista}
-            onPress={_handlePress}>
-            <List.Item title={comments} />
-          </List.Accordion>
-        </List.Section>
+        <Button
+          onPress={() => {
+            // eslint-disable-next-line no-shadow
+            setShowComments(showComments => !showComments);
+          }}>
+          {!showComments ? 'Mostrar comentarios' : 'Ocultar comentarios'}
+        </Button>
       </CardSection>
+      {showComments &&
+        comments &&
+        comments.map((comment, index) => {
+          return (
+            <CardSection key={index}>
+              <List.Item
+                title={comment.realname}
+                description={comment._content}
+                // eslint-disable-next-line react-native/no-inline-styles
+                style={{flex: 1}}
+                left={props => <List.Icon {...props} icon="comment" />}
+              />
+            </CardSection>
+          );
+        })}
     </Card>
   );
 };
