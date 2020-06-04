@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Text, View} from 'react-native';
+import {FlatList, View, StyleSheet} from 'react-native';
 import axios from 'axios';
 import PhotoDetail from './PhotoDetail';
+import {ActivityIndicator} from 'react-native-paper';
 
 const PhotoList = ({route}) => {
   const [photos, setPhotos] = useState(null);
@@ -20,13 +21,12 @@ const PhotoList = ({route}) => {
     };
 
     fetchData();
-  }, []);
+  }, [route.params.albumId]);
 
   if (!photos) {
     return (
-      // eslint-disable-next-line react-native/no-inline-styles
-      <View style={{flex: 1}}>
-        <Text>Loading...</Text>
+      <View style={styles.container}>
+        <ActivityIndicator animating={true} size={40} />
       </View>
     );
   }
@@ -51,5 +51,12 @@ const PhotoList = ({route}) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+});
 
 export default PhotoList;

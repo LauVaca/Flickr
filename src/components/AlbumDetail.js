@@ -1,52 +1,23 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import Card from './Card';
-import CardSection from './CardSection';
-import Button from './Button';
+import {Button, Card} from 'react-native-paper';
 
 const AlbumDetail = ({navigation, title, albumId}) => {
-  const {headerContentStyle, headerTextStyle} = styles;
   return (
-    <Card>
-      <CardSection>
-        <View style={headerContentStyle}>
-          <Text style={headerTextStyle}>{title}</Text>
-        </View>
-      </CardSection>
-
-      <CardSection>
+    <Card elevation={5} style={style}>
+      <Card.Title title={title} />
+      <Card.Content>
         <Button
+          mode="contained"
           onPress={() => navigation.navigate('photoList', {albumId: albumId})}>
-          See Now!
+          Ver album
         </Button>
-      </CardSection>
+      </Card.Content>
     </Card>
   );
 };
 
-const styles = {
-  headerContentStyle: {
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-  },
-  headerTextStyle: {
-    fontSize: 18,
-  },
-  thumbnailStyle: {
-    height: 50,
-    width: 50,
-  },
-  thumbnailContainerStyle: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  imageStyle: {
-    height: 300,
-    flex: 1,
-    width: null,
-  },
+const style = {
+  marginBottom: 10,
 };
 
 export default AlbumDetail;

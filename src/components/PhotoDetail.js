@@ -1,18 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View, Image, Linking} from 'react-native';
-import Card from './Card';
-import CardSection from './CardSection';
-import Button from './Button';
+import {Linking, View} from 'react-native';
+import {Avatar, Button, Card, List, Divider} from 'react-native-paper';
 import axios from 'axios';
-import {List} from 'react-native-paper';
-
 const PhotoDetail = ({title, imageUrl, photoId}) => {
   const {
-    thumbnailStyle,
-    headerContentStyle,
-    thumbnailContainerStyle,
-    headerTextStyle,
+    cardStyle,
+    container,
+    buttonStyle,
     imageStyle,
+    border,
+    borderContainer,
   } = styles;
 
   const [comments, setComments] = useState(null);
@@ -32,47 +29,51 @@ const PhotoDetail = ({title, imageUrl, photoId}) => {
     fetchComments();
   }, [photoId]);
 
+  const imageSmall = props => (
+    <Avatar.Image {...props} source={{uri: imageUrl}} />
+  );
+
   return (
-    <Card>
-      <CardSection>
-        <View style={thumbnailContainerStyle}>
-          <Image style={thumbnailStyle} source={{uri: imageUrl}} />
-        </View>
-        <View style={headerContentStyle}>
-          <Text style={headerTextStyle}>{title}</Text>
-        </View>
-      </CardSection>
-
-      <CardSection>
-        <Image style={imageStyle} source={{uri: imageUrl}} />
-      </CardSection>
-
-      <CardSection>
-        <Button onPress={() => Linking.openURL(imageUrl)}>See Now!</Button>
-      </CardSection>
-
-      <CardSection>
-        <Button
-          onPress={() => {
-            // eslint-disable-next-line no-shadow
-            setShowComments(showComments => !showComments);
-          }}>
-          {!showComments ? 'Mostrar comentarios' : 'Ocultar comentarios'}
-        </Button>
-      </CardSection>
+    <Card elevation={5} style={cardStyle}>
+      <Card.Title title={title} left={imageSmall} />
+      <Card.Cover style={imageStyle} source={{uri: imageUrl}} />
+      <View style={container}>
+        <Card.Actions>
+          <Button
+            style={buttonStyle}
+            mode="text"
+            onPress={() => Linking.openURL(imageUrl)}>
+            Abrir imagen
+          </Button>
+          <View style={borderContainer}>
+            <View style={border} />
+          </View>
+          <Button
+            style={buttonStyle}
+            mode="text"
+            onPress={() => {
+              // eslint-disable-next-line no-shadow
+              setShowComments(showComments => !showComments);
+            }}>
+            {!showComments ? 'Mostrar comentarios' : 'Ocultar comentarios'}
+          </Button>
+        </Card.Actions>
+      </View>
       {showComments &&
         comments &&
         comments.map((comment, index) => {
           return (
-            <CardSection key={index}>
+            <View key={index}>
               <List.Item
                 title={comment.realname}
                 description={comment._content}
                 // eslint-disable-next-line react-native/no-inline-styles
                 style={{flex: 1}}
-                left={props => <List.Icon {...props} icon="comment" />}
+                left={props => (
+                  <Avatar.Icon size={50} icon={require('./man-user.png')} />
+                )}
               />
-            </CardSection>
+            </View>
           );
         })}
     </Card>
@@ -80,27 +81,31 @@ const PhotoDetail = ({title, imageUrl, photoId}) => {
 };
 
 const styles = {
-  headerContentStyle: {
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-  },
-  headerTextStyle: {
-    fontSize: 18,
-  },
-  thumbnailStyle: {
-    height: 50,
-    width: 50,
-  },
-  thumbnailContainerStyle: {
-    justifyContent: 'center',
+  container: {
     alignItems: 'center',
-    marginLeft: 10,
-    marginRight: 10,
+    justifyContent: 'center',
   },
   imageStyle: {
     height: 300,
     flex: 1,
-    width: null,
+  },
+  buttonStyle: {
+    marginRight: 10,
+  },
+  cardStyle: {
+    padding: 10,
+    marginBottom: 15,
+  },
+  borderContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 5,
+  },
+  border: {
+    flex: 0.5,
+    borderRightWidth: 2,
+    borderRightColor: '#428947',
   },
 };
 

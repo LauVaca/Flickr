@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import {FlatList, Text, View} from 'react-native';
+import {FlatList, View, StyleSheet} from 'react-native';
 import axios from 'axios';
 import AlbumDetail from './AlbumDetail';
+import {ActivityIndicator} from 'react-native-paper';
 
 const AlbumList = props => {
   const [photoset, setPhotoset] = useState(null);
@@ -21,7 +22,11 @@ const AlbumList = props => {
   }, []);
 
   if (!photoset) {
-    return <Text>Loading...</Text>;
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator animating={true} size={40} />
+      </View>
+    );
   }
 
   return (
@@ -42,5 +47,12 @@ const AlbumList = props => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+});
 
 export default AlbumList;
